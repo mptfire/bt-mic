@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BT Mic</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="idle">Idle</string>
+    <string name="waiting_bt">Waiting for the Bluetooth microphone…</string>
+    <string name="rec_bt">Recording — Bluetooth microphone</string>
+    <string name="rec_phone">Recording — phone microphone (fallback)</string>
+    <string name="saved">Saved to notes</string>
+    <string name="failed">Failed: %1$s</string>
+    <string name="open_once">Mic blocked by Android — open the app once</string>
+    <string name="no_permission">Microphone permission missing</string>
+    <string name="why_perms">Needs mic + nearby devices to route your headset microphone</string>
+    <string name="notif_stop">Stop</string>
+</resources>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Deliberately NO INTERNET, NO NotificationListener (audit F3/F5). -->
+
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:icon="@android:drawable/ic_btn_speak_now"
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".service.MicService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <receiver
+            android:name=".service.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".store.MiniFileProvider"
+            android:authorities="app.btmic.notes"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <!-- Package visibility (Android 11+): recognizers + the OSTT probe. -->
+        <queries>
+            <intent>
+                <action android:name="android.speech.RecognitionService" />
+            </intent>
+            <intent>
+                <action android:name="app.offlinespeechtotext.action.TRANSCRIBE_AUDIO" />
+                <data android:scheme="content" />
+            </intent>
+            <package android:name="app.offlinespeechtotext" />
+        </queries>
+    </application>
+</manifest>
