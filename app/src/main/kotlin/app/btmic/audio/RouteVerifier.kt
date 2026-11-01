@@ -6,7 +6,6 @@ import android.media.AudioRecord
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import java.util.concurrent.Executor
 
 /**
  * SKILL.md recipe 9: verify where you actually record. The UI must show the
@@ -16,7 +15,6 @@ import java.util.concurrent.Executor
 class RouteVerifier(
     private val rec: AudioRecord,
     private val am: AudioManager,
-    exec: Executor,
 ) {
     var onRouteChanged: ((Int) -> Unit)? = null
 
@@ -39,7 +37,7 @@ class RouteVerifier(
         val type = rec.routedDevice?.type ?: -1
         Log.i(TAG, "routed type=$type")
         rec.addOnRoutingChangedListener(routingListener, Handler(Looper.getMainLooper()))
-        am.registerAudioRecordingCallback(recCallback, exec)
+        am.registerAudioRecordingCallback(recCallback, Handler(Looper.getMainLooper()))
         onRouteChanged?.invoke(type)
     }
 

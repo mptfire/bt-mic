@@ -84,7 +84,7 @@ class RecordEngine(
             val r = Recorder(ar)
             r.onFirstSound = { apply(RecorderPolicy.Event.PHONE_FIRST_SOUND); _ui.value = Ui.RecordingPhone }
             r.onFailure = { msg -> _ui.value = Ui.Failed("phone mic: $msg") }
-            verifier = RouteVerifier(ar, am, Dispatchers.Main.asExecutor())
+            verifier = RouteVerifier(ar, am)
             r.start()
             rec = r
         }
@@ -100,7 +100,7 @@ class RecordEngine(
                     else _ui.value = Ui.Failed(msg)
                 }
             }
-            verifier = RouteVerifier(ar, am, Dispatchers.Main.asExecutor())
+            verifier = RouteVerifier(ar, am)
             verifier?.onRouteChanged = { type ->
                 // recipe 9: if routedDevice is not Bluetooth, say so
                 if (!app.btmic.policy.DevicePolicy.isBt(type) &&
