@@ -1,5 +1,6 @@
 package app.btmic.policy
 
+import app.btmic.policy.DevicePolicy.Cand
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -9,9 +10,9 @@ import kotlin.test.assertTrue
 /** SKILL.md "Choosing between several devices": the car + headphones case. */
 class DevicePolicyTest {
     private val p = DevicePolicy
-    private val car = p.Cand(p.TYPE_BLUETOOTH_SCO, "CAR:MAC")
-    private val phones = p.Cand(p.TYPE_BLE_HEADSET, "HP:MAC")
-    private val aids = p.Cand(33, "AID:MAC")
+    private val car = Cand(p.TYPE_BLUETOOTH_SCO, "CAR:MAC")
+    private val phones = Cand(p.TYPE_BLE_HEADSET, "HP:MAC")
+    private val aids = Cand(33, "AID:MAC")
 
     @Test
     fun prefersDeviceMediaPlaysTo() {
@@ -35,7 +36,7 @@ class DevicePolicyTest {
 
     @Test
     fun nothingBluetoothIsNull() {
-        assertNull(p.pick(listOf(p.Cand(15, "builtin")), emptySet()))
+        assertNull(p.pick(listOf(Cand(15, "builtin")), emptySet()))
         assertNull(p.pick(emptyList(), emptySet()))
     }
 
@@ -49,10 +50,10 @@ class DevicePolicyTest {
 
     @Test
     fun inputRankPrefersAddressThenFamily() {
-        val route = p.Cand(p.TYPE_BLE_HEADSET, "AA:1")
-        val same = p.Cand(p.TYPE_BLE_HEADSET, "AA:1")
-        val otherAddr = p.Cand(p.TYPE_BLE_HEADSET, "BB:2")
-        val sco = p.Cand(p.TYPE_BLUETOOTH_SCO, "AA:1")
+        val route = Cand(p.TYPE_BLE_HEADSET, "AA:1")
+        val same = Cand(p.TYPE_BLE_HEADSET, "AA:1")
+        val otherAddr = Cand(p.TYPE_BLE_HEADSET, "BB:2")
+        val sco = Cand(p.TYPE_BLUETOOTH_SCO, "AA:1")
         assertTrue(p.inputRank(route, same) < p.inputRank(route, otherAddr))
         assertTrue(p.inputRank(route, otherAddr) < p.inputRank(route, sco))
     }

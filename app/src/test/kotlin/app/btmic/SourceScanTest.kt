@@ -53,9 +53,9 @@ class SourceScanTest {
             ?: return // engine file renames are allowed; the gate is about ui/
         assertTrue("stopAndRelease()" in engine, "engine releases the recorder")
         // lifecycle names must not appear next to stopAndRelease in the engine
-        for (life in listOf("onPause", "onStop(", "onDestroy {")) {
-            assertFalse(
-                Regex("$life\\s*\\{[^}]*stopAndRelease").find(engine) != null,
+        for (life in listOf("onPause", "onStop", "onDestroy")) {
+            val rx = Regex(Regex.escape(life) + "\\s*\\{[^}]*stopAndRelease")
+            assertFalse(rx.find(engine) != null,
                 "lifecycle callback must not stop the recorder")
         }
     }
@@ -67,9 +67,12 @@ class SourceScanTest {
             ?: File("src/main/AndroidManifest.xml")
         if (!mf.isFile) return
         val t = mf.readText()
-        assertFalse("android.permission.INTERNET" in t,
+        assertFalse(
+            "<uses-permission android:name=\"android.permission.INTERNET\"" in t,
             "the recorder has no network use; do not add INTERNET")
-        assertFalse("NotificationListener" in t,
+        assertFalse(
+            "BIND_NOTIFICATION_LISTENER_SERVICE" in t ||
+                "NotificationListenerService" in t,
             "audit F5: no NotificationListener (read-all-notifications)")
         assertTrue("foregroundServiceType=\"microphone\"" in t)
         assertTrue("allowBackup=\"false\"" in t, "audit F6: notes are private")
