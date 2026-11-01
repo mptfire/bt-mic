@@ -47,15 +47,17 @@
             android:grantUriPermissions="true" />
 
         <!-- Package visibility (Android 11+): recognizers + the OSTT probe. -->
-        <queries>
-            <intent>
-                <action android:name="android.speech.RecognitionService" />
-            </intent>
-            <intent>
-                <action android:name="app.offlinespeechtotext.action.TRANSCRIBE_AUDIO" />
-                <data android:scheme="content" />
-            </intent>
-            <package android:name="app.offlinespeechtotext" />
-        </queries>
     </application>
+
+    <!-- Package visibility (Android 11+): recognizers + the OSTT probe. -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <intent>
+            <action android:name="app.offlinespeechtotext.action.TRANSCRIBE_AUDIO" />
+            <data android:scheme="content" />
+        </intent>
+        <package android:name="app.offlinespeechtotext" />
+    </queries>
 </manifest>
