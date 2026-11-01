@@ -16,7 +16,7 @@ object NoteStore {
     fun dir(context: Context): File =
         File(context.filesDir, "notes").apply { mkdirs() }
 
-    fun newNames(): Pair<File, File> {
+    fun newNames(context: Context): Pair<File, File> {
         val ts = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
         val d = File(dir(context), ts).apply { mkdirs() }
         return File(d, "note.m4a") to File(d, "note.txt")

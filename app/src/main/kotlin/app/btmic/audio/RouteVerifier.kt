@@ -20,10 +20,12 @@ class RouteVerifier(
 ) {
     var onRouteChanged: ((Int) -> Unit)? = null
 
-    private val routingListener = AudioRecord.OnRoutingChangedListener { r, _ ->
-        val type = r.routedDevice?.type ?: -1
-        Log.i(TAG, "routing changed -> type=$type")
-        onRouteChanged?.invoke(type)
+    private val routingListener = object : AudioRecord.OnRoutingChangedListener {
+        override fun onRoutingChanged(r: AudioRecord?) {
+            val type = r?.routedDevice?.type ?: -1
+            Log.i(TAG, "routing changed -> type=$type")
+            onRouteChanged?.invoke(type)
+        }
     }
     private val recCallback = object : AudioManager.AudioRecordingCallback() {
         override fun onRecordingConfigChanged(cfgs: List<AudioRecordingConfiguration>) {
@@ -37,7 +39,7 @@ class RouteVerifier(
         val type = rec.routedDevice?.type ?: -1
         Log.i(TAG, "routed type=$type")
         rec.addOnRoutingChangedListener(routingListener, Handler(Looper.getMainLooper()))
-        am.registerAudioRecordingCallback(exec, recCallback)
+        am.registerAudioRecordingCallback(recCallback, exec)
         onRouteChanged?.invoke(type)
     }
 

@@ -12,6 +12,7 @@ import app.btmic.audio.RouteVerifier
 import app.btmic.policy.RecorderPolicy
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,16 +80,18 @@ class RecordEngine(
         fun openPhone() {
             rec?.stopAndRelease()
             verifier?.release()
-            val r = Recorder.open(null)
+            val ar = Recorder.open(null)
+            val r = Recorder(ar)
             r.onFirstSound = { apply(RecorderPolicy.Event.PHONE_FIRST_SOUND); _ui.value = Ui.RecordingPhone }
             r.onFailure = { msg -> _ui.value = Ui.Failed("phone mic: $msg") }
-            verifier = RouteVerifier(r, am, scope.coroutineContext[Job]!!.let { Dispatchers.Main })
+            verifier = RouteVerifier(ar, am, Dispatchers.Main.asExecutor())
             r.start()
             rec = r
         }
 
         fun openBt(input: AudioDeviceInfo?) {
-            val r = Recorder.open(input)
+            val ar = Recorder.open(input)
+            val r = Recorder(ar)
             r.onFirstSound = { apply(RecorderPolicy.Event.FIRST_SOUND); _ui.value = Ui.RecordingBt }
             r.onFailure = { msg ->
                 if (!stopping) {
@@ -97,7 +100,7 @@ class RecordEngine(
                     else _ui.value = Ui.Failed(msg)
                 }
             }
-            verifier = RouteVerifier(r, am, Dispatchers.Main)
+            verifier = RouteVerifier(ar, am, Dispatchers.Main.asExecutor())
             verifier?.onRouteChanged = { type ->
                 // recipe 9: if routedDevice is not Bluetooth, say so
                 if (!app.btmic.policy.DevicePolicy.isBt(type) &&
@@ -115,7 +118,7 @@ class RecordEngine(
                 sink.open()
                 apply(RecorderPolicy.Event.START)
                 _ui.value = Ui.Routing
-                val bt = BtRoute(am, Dispatchers.Main)
+                val bt = BtRoute(am, Dispatchers.Main.asExecutor())
                 val ok = bt.acquire()
                 if (!ok) {
                     apply(RecorderPolicy.Event.ROUTE_FAILED)

@@ -59,7 +59,7 @@ class MicService : Service() {
             return START_STICKY
         }
         startInForeground(getString(app.btmic.R.string.waiting_bt))
-        val (m4a, txt) = NoteStore.newNames()
+        val (m4a, txt) = NoteStore.newNames(this)
         val transcriber = Transcriber(this)
         engine = RecordEngine(this, scope, AacSink(m4a)).also { e ->
             scope.launch {
